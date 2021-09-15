@@ -20,9 +20,14 @@ STATUS="running"
 while [ "$STATUS" = 'running' ]
 do
 	sleep 10
+  output=`etcdctl get /kibishii/ops/$OPID --endpoints=http://etcd-client:2379 --print-value-only`
+  echo "====================================="
+  echo $output
+  echo "#####################################"
 	STATUS=`etcdctl get /kibishii/ops/$OPID --endpoints=http://etcd-client:2379 --print-value-only | jq ".status" | sed -e 's/"//g'`
 	NODES_COMPLETED=`etcdctl get /kibishii/ops/$OPID --endpoints=http://etcd-client:2379 --print-value-only | jq ".nodesCompleted" | sed -e 's/"//g'`
 done
+echo "@@@@@@@@@@@@@@@@@@@@@@@@ $NODES_COMPLETED"
 if [ "$NODES_COMPLETED" -ne "$NODES" ] 
 then
 	STATUS="failed"
